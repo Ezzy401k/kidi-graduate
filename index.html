@@ -33,6 +33,7 @@
             align-items: center;
             padding: 40px 20px 80px;
             gap: 0;
+            overflow-x: hidden; /* safety net */
         }
 
         /* ── PAPER TEXTURE MIXIN ── */
@@ -489,7 +490,7 @@
             opacity: 0.6;
         }
 
-        /* ── ROTATE / STACK EFFECT ── */
+        /* ── ROTATE / STACK EFFECT (FIXED – no overflow) ── */
         .page-stack {
             position: relative;
         }
@@ -497,13 +498,14 @@
         .page-stack::after {
             content: '';
             position: absolute;
-            bottom: -6px;
-            right: -6px;
+            bottom: 0;
+            right: 0;
             width: 100%;
             height: 100%;
             background: var(--aged);
             z-index: -1;
             border: 1px solid #c5b898;
+            transform: translate(6px, 6px); /* moved instead of negative offsets */
         }
 
         /* ── RESPONSIVE BREAKPOINTS ── */
