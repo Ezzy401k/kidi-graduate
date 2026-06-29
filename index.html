@@ -1,757 +1,673 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KIDI — The Graduate Issue</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IM+Fell+English:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --ink: #1a1008;
-            --ink-light: #3d2e1a;
-            --cream: #f5efe2;
-            --aged: #e8dfc8;
-            --aged-dark: #d4c9b0;
-            --red: #b22222;
-            --gold: #c8952a;
-            --shadow: rgba(26, 16, 8, 0.18);
-        }
-
-        body {
-            background: #b8a98a;
-            background-image: radial-gradient(ellipse at 20% 50%, #a89578 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, #c4b490 0%, transparent 50%);
-            min-height: 100vh;
-            font-family: 'IM Fell English', Georgia, serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px 80px;
-            gap: 0;
-            overflow-x: hidden; /* safety net */
-        }
-
-        /* ── PAPER TEXTURE MIXIN ── */
-        .paper {
-            background: var(--cream);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            position: relative;
-        }
-
-        .paper::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(180, 160, 120, 0.04) 3px, rgba(180, 160, 120, 0.04) 4px);
-            pointer-events: none;
-        }
-
-        /* ── COVER PAGE ── */
-        .cover {
-            width: 100%;
-            max-width: 780px;
-            min-height: 1000px;
-            border-radius: 2px;
-            box-shadow: -6px 6px 0 #8a7a60, 8px 10px 40px var(--shadow), 0 0 0 1px #c5b898;
-            overflow: hidden;
-            position: relative;
-            display: grid;
-            grid-template-rows: auto 1fr auto;
-        }
-
-        .cover-masthead {
-            background: var(--ink);
-            color: var(--cream);
-            padding: 18px 32px 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            border-bottom: 3px solid var(--gold);
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .mag-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 0.35em;
-            text-transform: uppercase;
-            color: var(--gold);
-        }
-
-        .mag-issue {
-            font-family: 'Space Mono', monospace;
-            font-size: 10px;
-            color: #9a8870;
-            letter-spacing: 0.15em;
-        }
-
-        .cover-hero {
-            position: relative;
-            overflow: hidden;
-            background: var(--ink);
-        }
-
-        .cover-hero img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center top;
-            display: block;
-            filter: sepia(15%) contrast(1.05);
-            min-height: 520px;
-        }
-
-        .cover-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, transparent 30%, rgba(26, 16, 8, 0.15) 60%, rgba(26, 16, 8, 0.85) 100%);
-        }
-
-        .cover-text {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 40px 36px 32px;
-            color: var(--cream);
-        }
-
-        .cover-eyebrow {
-            font-family: 'Space Mono', monospace;
-            font-size: 10px;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 10px;
-        }
-
-        .cover-name {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(58px, 14vw, 96px);
-            font-weight: 900;
-            line-height: 0.9;
-            letter-spacing: -0.02em;
-            margin-bottom: 12px;
-        }
-
-        .cover-subhead {
-            font-style: italic;
-            font-size: 15px;
-            line-height: 1.5;
-            color: rgba(245, 239, 226, 0.88);
-            max-width: 420px;
-            border-left: 2px solid var(--red);
-            padding-left: 14px;
-        }
-
-        .cover-footer {
-            background: var(--ink);
-            padding: 10px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #2e2218;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .cover-footer span {
-            font-family: 'Space Mono', monospace;
-            font-size: 9px;
-            color: #6a5a45;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-        }
-
-        .cover-footer .red-bar {
-            height: 3px;
-            width: 60px;
-            background: var(--red);
-        }
-
-        /* ── FOLD / TAPE ── */
-        .tape {
-            width: 90px;
-            height: 22px;
-            background: rgba(255, 240, 180, 0.55);
-            border: 1px solid rgba(200, 180, 100, 0.4);
-            border-radius: 1px;
-            position: absolute;
-            top: -11px;
-            left: 50%;
-            transform: translateX(-50%) rotate(-1.5deg);
-            backdrop-filter: blur(1px);
-            z-index: 5;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-        }
-
-        /* ── SPREAD PAGE ── */
-        .spread {
-            width: 100%;
-            max-width: 780px;
-            position: relative;
-            margin-top: -4px;
-        }
-
-        .spread .tape {
-            top: -11px;
-            left: 35%;
-        }
-
-        .page {
-            padding: 52px 40px 44px;
-            border-left: 1px solid #c5b898;
-            border-right: 1px solid #c5b898;
-            border-bottom: 1px solid #c5b898;
-            box-shadow: -4px 4px 0 #8a7a60, 6px 8px 30px var(--shadow);
-        }
-
-        /* ── SECTION HEADER ── */
-        .section-rule {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 28px;
-        }
-
-        .section-rule::before {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--ink);
-        }
-
-        .section-label {
-            font-family: 'Space Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: var(--ink-light);
-        }
-
-        .section-rule::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--ink);
-        }
-
-        /* ── STATS GRID ── */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1px;
-            background: var(--aged-dark);
-            border: 1px solid var(--aged-dark);
-            margin-bottom: 40px;
-        }
-
-        .stat-cell {
-            background: var(--cream);
-            padding: 22px 20px;
-        }
-
-        .stat-label {
-            font-family: 'Space Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 8px;
-        }
-
-        .stat-value {
-            font-family: 'Playfair Display', serif;
-            font-size: 17px;
-            font-weight: 700;
-            line-height: 1.3;
-            color: var(--ink);
-        }
-
-        .stat-cell.accent {
-            background: var(--ink);
-        }
-
-        .stat-cell.accent .stat-label {
-            color: var(--gold);
-        }
-
-        .stat-cell.accent .stat-value {
-            color: var(--cream);
-        }
-
-        /* ── PULL QUOTE ── */
-        .pull-quote {
-            border-left: 4px solid var(--red);
-            padding: 8px 0 8px 24px;
-            margin: 36px 0;
-        }
-
-        .pull-quote blockquote {
-            font-family: 'Playfair Display', serif;
-            font-size: 22px;
-            font-style: italic;
-            line-height: 1.5;
-            color: var(--ink);
-        }
-
-        .pull-quote cite {
-            display: block;
-            margin-top: 10px;
-            font-family: 'Space Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--gold);
-            font-style: normal;
-        }
-
-        /* ── BODY TEXT ── */
-        .body-cols {
-            column-count: 2;
-            column-gap: 32px;
-            column-rule: 1px solid var(--aged-dark);
-            font-size: 13.5px;
-            line-height: 1.75;
-            color: var(--ink-light);
-            text-align: justify;
-            hyphens: auto;
-        }
-
-        .body-cols p {
-            margin-bottom: 14px;
-        }
-
-        .body-cols p:first-child::first-letter {
-            font-family: 'Playfair Display', serif;
-            font-size: 52px;
-            font-weight: 900;
-            line-height: 0.8;
-            float: left;
-            margin: 4px 6px 0 0;
-            color: var(--red);
-        }
-
-        /* ── PHOTO COLLAGE PAGE ── */
-        .collage-page {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 280px 200px;
-            gap: 6px;
-            background: var(--aged-dark);
-            border: 1px solid var(--aged-dark);
-            margin-bottom: 0;
-        }
-
-        .photo-cell {
-            overflow: hidden;
-            position: relative;
-            background: var(--ink);
-        }
-
-        .photo-cell img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center top;
-            display: block;
-            filter: sepia(10%) contrast(1.04);
-            transition: transform 0.4s ease;
-        }
-
-        .photo-cell:hover img {
-            transform: scale(1.03);
-        }
-
-        .photo-cell.span2 {
-            grid-column: span 2;
-        }
-
-        .photo-cell.tall {
-            grid-row: span 2;
-        }
-
-        .photo-caption {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(26, 16, 8, 0.75));
-            padding: 20px 12px 10px;
-            font-family: 'Space Mono', monospace;
-            font-size: 8px;
-            color: rgba(245, 239, 226, 0.85);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-
-        /* ── VERDICT PAGE ── */
-        .verdict-page {
-            text-align: center;
-            padding: 60px 40px;
-        }
-
-        .verdict-stamp {
-            display: inline-block;
-            border: 4px solid var(--red);
-            color: var(--red);
-            font-family: 'Playfair Display', serif;
-            font-size: 42px;
-            font-weight: 900;
-            letter-spacing: 0.1em;
-            padding: 10px 28px;
-            transform: rotate(-3deg);
-            opacity: 0.9;
-            margin-bottom: 32px;
-            text-transform: uppercase;
-        }
-
-        .verdict-headline {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(28px, 5vw, 44px);
-            font-weight: 900;
-            line-height: 1.1;
-            color: var(--ink);
-            margin-bottom: 20px;
-        }
-
-        .verdict-body {
-            font-size: 14px;
-            line-height: 1.8;
-            color: var(--ink-light);
-            max-width: 500px;
-            margin: 0 auto 32px;
-        }
-
-        .verdict-tags {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 28px;
-        }
-
-        .tag {
-            font-family: 'Space Mono', monospace;
-            font-size: 9px;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            border: 1px solid var(--ink);
-            padding: 6px 14px;
-            color: var(--ink);
-        }
-
-        .tag.filled {
-            background: var(--ink);
-            color: var(--cream);
-        }
-
-        /* ── PAGE NUMBERS ── */
-        .pg-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 32px;
-            padding-top: 16px;
-            border-top: 1px solid var(--aged-dark);
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .pg-num {
-            font-family: 'Space Mono', monospace;
-            font-size: 9px;
-            color: #8a7a60;
-            letter-spacing: 0.2em;
-        }
-
-        .pg-mag {
-            font-family: 'Playfair Display', serif;
-            font-size: 10px;
-            font-style: italic;
-            color: #8a7a60;
-        }
-
-        /* ── DECORATIVE CORNER MARKS ── */
-        .corner-marks::after {
-            content: '✦';
-            position: absolute;
-            bottom: 14px;
-            right: 16px;
-            font-size: 10px;
-            color: var(--gold);
-            opacity: 0.6;
-        }
-
-        /* ── ROTATE / STACK EFFECT (FIXED – no overflow) ── */
-        .page-stack {
-            position: relative;
-        }
-
-        .page-stack::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--aged);
-            z-index: -1;
-            border: 1px solid #c5b898;
-            transform: translate(6px, 6px); /* moved instead of negative offsets */
-        }
-
-        /* ── RESPONSIVE BREAKPOINTS ── */
-        @media (max-width: 700px) {
-            .cover {
-                min-height: auto;
-            }
-
-            .cover-hero img {
-                min-height: 420px;
-            }
-
-            .page {
-                padding: 40px 28px 36px;
-            }
-
-            .pull-quote blockquote {
-                font-size: 18px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 20px 12px 60px;
-            }
-
-            .body-cols {
-                column-count: 1;
-            }
-
-            .collage-page {
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: 200px 150px 150px;
-            }
-
-            .photo-cell.span2 {
-                grid-column: span 2;
-            }
-
-            .photo-cell.tall {
-                grid-row: span 1;
-            }
-
-            .cover-name {
-                font-size: 52px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .verdict-page {
-                padding: 48px 28px;
-            }
-
-            .verdict-stamp {
-                font-size: 34px;
-                padding: 8px 20px;
-            }
-
-            .verdict-headline {
-                font-size: 30px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .cover-masthead {
-                padding: 12px 16px;
-            }
-
-            .mag-title {
-                font-size: 11px;
-            }
-
-            .mag-issue {
-                font-size: 8px;
-            }
-
-            .cover-hero img {
-                min-height: 320px;
-            }
-
-            .cover-text {
-                padding: 28px 20px 24px;
-            }
-
-            .cover-name {
-                font-size: 44px;
-            }
-
-            .cover-subhead {
-                font-size: 13px;
-            }
-
-            .page {
-                padding: 32px 18px 28px;
-            }
-
-            .body-cols p:first-child::first-letter {
-                font-size: 42px;
-            }
-
-            .collage-page {
-                grid-template-rows: 150px 120px 120px;
-            }
-
-            .verdict-stamp {
-                font-size: 28px;
-            }
-
-            .verdict-headline {
-                font-size: 26px;
-            }
-
-            .verdict-body {
-                font-size: 13px;
-            }
-
-            .pull-quote blockquote {
-                font-size: 16px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIDI — The Graduate Issue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IM+Fell+English:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --ink: #1a1008;
+      --ink-light: #3d2e1a;
+      --cream: #f5efe2;
+      --aged: #e8dfc8;
+      --aged-dark: #d4c9b0;
+      --red: #b22222;
+      --gold: #c8952a;
+      --shadow: rgba(26,16,8,0.18);
+    }
+    body {
+      background: #b8a98a;
+      background-image: radial-gradient(ellipse at 20% 50%, #a89578 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 20%, #c4b490 0%, transparent 50%);
+      min-height: 100vh;
+      font-family: 'IM Fell English', Georgia, serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 80px;
+      gap: 0;
+      overflow-x: hidden; /* prevents horizontal scroll from stack effect */
+    }
+    .paper {
+      background: var(--cream);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      position: relative;
+    }
+    .paper::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 3px,
+        rgba(180,160,120,0.04) 3px,
+        rgba(180,160,120,0.04) 4px
+      );
+      pointer-events: none;
+    }
+    .cover {
+      width: 100%;
+      max-width: 780px;
+      min-height: 1000px;
+      border-radius: 2px;
+      box-shadow: -6px 6px 0 #8a7a60, 8px 10px 40px var(--shadow), 0 0 0 1px #c5b898;
+      overflow: hidden;
+      position: relative;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+    .cover-masthead {
+      background: var(--ink);
+      color: var(--cream);
+      padding: 18px 32px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 3px solid var(--gold);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .mag-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .mag-issue {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: #9a8870;
+      letter-spacing: 0.15em;
+    }
+    .cover-hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--ink);
+    }
+    .cover-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      filter: sepia(15%) contrast(1.05);
+      min-height: 520px;
+    }
+    .cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 30%,
+        rgba(26,16,8,0.15) 60%,
+        rgba(26,16,8,0.85) 100%
+      );
+    }
+    .cover-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 40px 36px 32px;
+      color: var(--cream);
+    }
+    .cover-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .cover-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(58px, 14vw, 96px);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    .cover-subhead {
+      font-style: italic;
+      font-size: 15px;
+      line-height: 1.5;
+      color: rgba(245,239,226,0.88);
+      max-width: 420px;
+      border-left: 2px solid var(--red);
+      padding-left: 14px;
+    }
+    .cover-footer {
+      background: var(--ink);
+      padding: 10px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #2e2218;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .cover-footer span {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      color: #6a5a45;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .cover-footer .red-bar {
+      height: 3px;
+      width: 60px;
+      background: var(--red);
+    }
+    .tape {
+      width: 90px;
+      height: 22px;
+      background: rgba(255,240,180,0.55);
+      border: 1px solid rgba(200,180,100,0.4);
+      border-radius: 1px;
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-1.5deg);
+      backdrop-filter: blur(1px);
+      z-index: 5;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    }
+    .spread {
+      width: 100%;
+      max-width: 780px;
+      position: relative;
+      margin-top: -4px;
+    }
+    .spread .tape {
+      top: -11px;
+      left: 35%;
+    }
+    .page {
+      padding: 52px 40px 44px;
+      border-left: 1px solid #c5b898;
+      border-right: 1px solid #c5b898;
+      border-bottom: 1px solid #c5b898;
+      box-shadow: -4px 4px 0 #8a7a60, 6px 8px 30px var(--shadow);
+    }
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .section-rule::before {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--ink);
+    }
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+    }
+    .section-rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--ink);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--aged-dark);
+      border: 1px solid var(--aged-dark);
+      margin-bottom: 40px;
+    }
+    .stat-cell {
+      background: var(--cream);
+      padding: 22px 20px;
+    }
+    .stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--ink);
+    }
+    .stat-cell.accent {
+      background: var(--ink);
+    }
+    .stat-cell.accent .stat-label {
+      color: var(--gold);
+    }
+    .stat-cell.accent .stat-value {
+      color: var(--cream);
+    }
+    .pull-quote {
+      border-left: 4px solid var(--red);
+      padding: 8px 0 8px 24px;
+      margin: 36px 0;
+    }
+    .pull-quote blockquote {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-style: italic;
+      line-height: 1.5;
+      color: var(--ink);
+    }
+    .pull-quote cite {
+      display: block;
+      margin-top: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-style: normal;
+    }
+    .body-cols {
+      column-count: 2;
+      column-gap: 32px;
+      column-rule: 1px solid var(--aged-dark);
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--ink-light);
+      text-align: justify;
+      hyphens: auto;
+    }
+    .body-cols p {
+      margin-bottom: 14px;
+    }
+    .body-cols p:first-child::first-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 0.8;
+      float: left;
+      margin: 4px 6px 0 0;
+      color: var(--red);
+    }
+    .collage-page {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 280px 200px;
+      gap: 6px;
+      background: var(--aged-dark);
+      border: 1px solid var(--aged-dark);
+      margin-bottom: 0;
+    }
+    .photo-cell {
+      overflow: hidden;
+      position: relative;
+      background: var(--ink);
+    }
+    .photo-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      filter: sepia(10%) contrast(1.04);
+      transition: transform 0.4s ease;
+    }
+    .photo-cell:hover img {
+      transform: scale(1.03);
+    }
+    .photo-cell.span2 {
+      grid-column: span 2;
+    }
+    .photo-cell.tall {
+      grid-row: span 2;
+    }
+    .photo-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(26,16,8,0.75));
+      padding: 20px 12px 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 8px;
+      color: rgba(245,239,226,0.85);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .verdict-page {
+      text-align: center;
+      padding: 60px 40px;
+    }
+    .verdict-stamp {
+      display: inline-block;
+      border: 4px solid var(--red);
+      color: var(--red);
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      padding: 10px 28px;
+      transform: rotate(-3deg);
+      opacity: 0.9;
+      margin-bottom: 32px;
+      text-transform: uppercase;
+    }
+    .verdict-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .verdict-body {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--ink-light);
+      max-width: 500px;
+      margin: 0 auto 32px;
+    }
+    .verdict-tags {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: 1px solid var(--ink);
+      padding: 6px 14px;
+      color: var(--ink);
+    }
+    .tag.filled {
+      background: var(--ink);
+      color: var(--cream);
+    }
+    .pg-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--aged-dark);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pg-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      color: #8a7a60;
+      letter-spacing: 0.2em;
+    }
+    .pg-mag {
+      font-family: 'Playfair Display', serif;
+      font-size: 10px;
+      font-style: italic;
+      color: #8a7a60;
+    }
+    .corner-marks::after {
+      content: '✦';
+      position: absolute;
+      bottom: 14px;
+      right: 16px;
+      font-size: 10px;
+      color: var(--gold);
+      opacity: 0.6;
+    }
+    /* ── STACK EFFECT (no overflow) ── */
+    .page-stack {
+      position: relative;
+    }
+    .page-stack::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--aged);
+      z-index: -1;
+      border: 1px solid #c5b898;
+      transform: translate(6px, 6px); /* moved instead of negative offsets */
+    }
+
+    /* ─────────────────────────────────────
+       RESPONSIVE BREAKPOINTS
+       ───────────────────────────────────── */
+    @media (max-width: 700px) {
+      .cover {
+        min-height: auto;
+      }
+      .cover-hero img {
+        min-height: 420px;
+      }
+      .page {
+        padding: 40px 28px 36px;
+      }
+      .pull-quote blockquote {
+        font-size: 18px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 20px 12px 60px;
+      }
+      .body-cols {
+        column-count: 1;
+      }
+      .collage-page {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 200px 150px 150px;
+      }
+      .photo-cell.span2 {
+        grid-column: span 2;
+      }
+      .photo-cell.tall {
+        grid-row: span 1;
+      }
+      .cover-name {
+        font-size: 52px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .verdict-page {
+        padding: 48px 28px;
+      }
+      .verdict-stamp {
+        font-size: 34px;
+        padding: 8px 20px;
+      }
+      .verdict-headline {
+        font-size: 30px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .cover-masthead {
+        padding: 12px 16px;
+      }
+      .mag-title {
+        font-size: 11px;
+      }
+      .mag-issue {
+        font-size: 8px;
+      }
+      .cover-hero img {
+        min-height: 320px;
+      }
+      .cover-text {
+        padding: 28px 20px 24px;
+      }
+      .cover-name {
+        font-size: 44px;
+      }
+      .cover-subhead {
+        font-size: 13px;
+      }
+      .page {
+        padding: 32px 18px 28px;
+      }
+      .body-cols p:first-child::first-letter {
+        font-size: 42px;
+      }
+      .collage-page {
+        grid-template-rows: 150px 120px 120px;
+      }
+      .verdict-stamp {
+        font-size: 28px;
+      }
+      .verdict-headline {
+        font-size: 26px;
+      }
+      .verdict-body {
+        font-size: 13px;
+      }
+      .pull-quote blockquote {
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
+
 <!-- ═══════════════ COVER ═══════════════ -->
 <div class="cover paper page-stack">
-    <div class="cover-masthead">
-        <span class="mag-title">The Graduate</span>
-        <span class="mag-issue">Vol. 1 &nbsp;·&nbsp; Class of 2024 &nbsp;·&nbsp; Architecture Edition</span>
+  <div class="cover-masthead">
+    <span class="mag-title">The Graduate</span>
+    <span class="mag-issue">Vol. 1 &nbsp;·&nbsp; Class of 2024 &nbsp;·&nbsp; Architecture Edition</span>
+  </div>
+  <div class="cover-hero">
+    <img src="images/Screenshot_20260629_180136_Instagram.jpg" alt="Kidi" />
+    <div class="cover-overlay"></div>
+    <div class="cover-text">
+      <div class="cover-eyebrow">★ &nbsp; The Graduate Issue &nbsp; ★</div>
+      <div class="cover-name">KIDI</div>
+      <p class="cover-subhead">Architect by degree, artist by heart — five years in the making.</p>
     </div>
-    <div class="cover-hero">
-        <img src="/mnt/user-data/uploads/Screenshot_20260629_180136_Instagram.jpg" alt="Kidi" />
-        <div class="cover-overlay"></div>
-        <div class="cover-text">
-            <div class="cover-eyebrow">★ &nbsp; The Graduate Issue &nbsp; ★</div>
-            <div class="cover-name">KIDI</div>
-            <p class="cover-subhead">Architect by degree, artist by heart — five years in the making.</p>
-        </div>
-    </div>
-    <div class="cover-footer">
-        <span>Est. 2019 &nbsp;·&nbsp; Addis Ababa</span>
-        <div class="red-bar"></div>
-        <span>Graduated 2024</span>
-    </div>
+  </div>
+  <div class="cover-footer">
+    <span>Est. 2019 &nbsp;·&nbsp; Addis Ababa</span>
+    <div class="red-bar"></div>
+    <span>Graduated 2024</span>
+  </div>
 </div>
 
 <!-- ═══════════════ SPREAD 1: STATS + BODY ═══════════════ -->
 <div class="spread">
-    <div class="tape"></div>
-    <div class="page paper corner-marks" style="position:relative;">
-        <div class="section-rule"><span class="section-label">The Record</span></div>
-        <div class="stats-grid">
-            <div class="stat-cell">
-                <div class="stat-label">Years of Grind</div>
-                <div class="stat-value">2019 – 2024</div>
-            </div>
-            <div class="stat-cell accent">
-                <div class="stat-label">Degree</div>
-                <div class="stat-value">Architecture</div>
-            </div>
-            <div class="stat-cell">
-                <div class="stat-label">The Crew</div>
-                <div class="stat-value">The wildest, most fun friends a girl could ask for</div>
-            </div>
-            <div class="stat-cell">
-                <div class="stat-label">The Present</div>
-                <div class="stat-value">Paintbrush in one hand. Headset in the other.</div>
-            </div>
-        </div>
-        <div class="pull-quote">
-            <blockquote>"Unbelievably talented, endlessly resilient, and officially graduated."</blockquote>
-            <cite>— The Verdict, unanimously</cite>
-        </div>
-        <div class="body-cols">
-            <p>Architect by degree, artist by heart. Five years of architecture school might have been intense, but Kidi made sure it was unforgettable — thanks to a circle of friends wild enough to keep the chaotic energy alive.</p>
-            <p>Her talent knows no bounds: balancing her creative soul as a painter with the fast-paced hustle of a call center, she's been building — not just blueprints, but a life on her own terms.</p>
-            <p>Kidi, you've officially graduated. Keep making art, keep making noise, and never lose that incredible spark that makes every room you walk into a little brighter.</p>
-            <p>Cheers to Kidi — the architect of her own bright future. The drafting table may rest, but the canvas never will.</p>
-        </div>
-        <div class="pg-footer">
-            <span class="pg-num">— 02 —</span>
-            <span class="pg-mag">The Graduate &middot; Class of 2024</span>
-            <span class="pg-num">Feature</span>
-        </div>
+  <div class="tape"></div>
+  <div class="page paper corner-marks" style="position:relative;">
+    <div class="section-rule"><span class="section-label">The Record</span></div>
+    <div class="stats-grid">
+      <div class="stat-cell">
+        <div class="stat-label">Years of Grind</div>
+        <div class="stat-value">2019 – 2024</div>
+      </div>
+      <div class="stat-cell accent">
+        <div class="stat-label">Degree</div>
+        <div class="stat-value">Architecture</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">The Crew</div>
+        <div class="stat-value">The wildest, most fun friends a girl could ask for</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-label">The Present</div>
+        <div class="stat-value">Paintbrush in one hand. Headset in the other.</div>
+      </div>
     </div>
+    <div class="pull-quote">
+      <blockquote>"Unbelievably talented, endlessly resilient, and officially graduated."</blockquote>
+      <cite>— The Verdict, unanimously</cite>
+    </div>
+    <div class="body-cols">
+      <p>Architect by degree, artist by heart. Five years of architecture school might have been intense, but Kidi made sure it was unforgettable — thanks to a circle of friends wild enough to keep the chaotic energy alive.</p>
+      <p>Her talent knows no bounds: balancing her creative soul as a painter with the fast-paced hustle of a call center, she's been building — not just blueprints, but a life on her own terms.</p>
+      <p>Kidi, you've officially graduated. Keep making art, keep making noise, and never lose that incredible spark that makes every room you walk into a little brighter.</p>
+      <p>Cheers to Kidi — the architect of her own bright future. The drafting table may rest, but the canvas never will.</p>
+    </div>
+    <div class="pg-footer">
+      <span class="pg-num">— 02 —</span>
+      <span class="pg-mag">The Graduate &middot; Class of 2024</span>
+      <span class="pg-num">Feature</span>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════════ SPREAD 2: PHOTO COLLAGE ═══════════════ -->
 <div class="spread" style="margin-top: 6px;">
-    <div class="tape" style="left: 65%; transform: translateX(-50%) rotate(1.2deg);"></div>
-    <div class="page paper" style="padding: 40px 40px 32px;">
-        <div class="section-rule"><span class="section-label">The Archives</span></div>
-        <div class="collage-page">
-            <div class="photo-cell tall">
-                <img src="/mnt/user-data/uploads/1000072258.jpg" alt="Kidi" />
-                <div class="photo-caption">Off Duty</div>
-            </div>
-            <div class="photo-cell span2">
-                <img src="/mnt/user-data/uploads/Screenshot_20260629_180048_Instagram.jpg" alt="Kidi" />
-                <div class="photo-caption">Editorial Moment</div>
-            </div>
-            <div class="photo-cell">
-                <img src="/mnt/user-data/uploads/1000072265.jpg" alt="Kidi" />
-                <div class="photo-caption">Out & About</div>
-            </div>
-            <div class="photo-cell">
-                <img src="/mnt/user-data/uploads/1000072270.jpg" alt="Kidi" style="object-position: center center;" />
-                <div class="photo-caption">Festive Season</div>
-            </div>
-        </div>
-        <div class="pg-footer">
-            <span class="pg-num">— 03 —</span>
-            <span class="pg-mag">The Graduate &middot; Class of 2024</span>
-            <span class="pg-num">Portfolio</span>
-        </div>
+  <div class="tape" style="left: 65%; transform: translateX(-50%) rotate(1.2deg);"></div>
+  <div class="page paper" style="padding: 40px 40px 32px;">
+    <div class="section-rule"><span class="section-label">The Archives</span></div>
+    <div class="collage-page">
+      <div class="photo-cell tall">
+        <img src="images/IMG_20260629_175738_004.jpg" alt="Kidi" />
+        <div class="photo-caption">Off Duty</div>
+      </div>
+      <div class="photo-cell span2">
+        <img src="images/Screenshot_20260629_180048_Instagram.jpg" alt="Kidi" />
+        <div class="photo-caption">Editorial Moment</div>
+      </div>
+      <div class="photo-cell">
+        <img src="images/Screenshot_20260629_180025_Instagram.jpg" alt="Kidi" />
+        <div class="photo-caption">Out & About</div>
+      </div>
+      <div class="photo-cell">
+        <img src="images/Screenshot_20260629_175932_Instagram.jpg" alt="Kidi" style="object-position: center center;" />
+        <div class="photo-caption">Festive Season</div>
+      </div>
     </div>
+    <div class="pg-footer">
+      <span class="pg-num">— 03 —</span>
+      <span class="pg-mag">The Graduate &middot; Class of 2024</span>
+      <span class="pg-num">Portfolio</span>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════════ SPREAD 3: VERDICT / CLOSING ═══════════════ -->
 <div class="spread" style="margin-top: 6px;">
-    <div class="tape" style="left: 25%; transform: translateX(-50%) rotate(-0.8deg);"></div>
-    <div class="page paper verdict-page" style="position: relative;">
-        <div class="verdict-stamp">GRADUATED</div>
-        <div class="verdict-headline">
-            The Architect<br/>of Her Own Future
-        </div>
-        <div class="verdict-body">
-            Five years of studio nights, final crits, and creative chaos — all building toward this moment. Kidi, you didn't just earn a degree. You proved that talent multiplied by resilience equals something truly extraordinary.
-        </div>
-        <div style="max-width:360px; margin: 0 auto 28px;">
-            <img src="/mnt/user-data/uploads/Screenshot_20260629_180146_Instagram.jpg" alt="Kidi graduating" style="width:100%; display:block; filter: sepia(12%) contrast(1.04); border: 6px solid var(--cream); box-shadow: 0 4px 20px var(--shadow), -3px 3px 0 var(--aged-dark);" />
-        </div>
-        <div class="verdict-tags">
-            <span class="tag filled">Architect</span>
-            <span class="tag">Painter</span>
-            <span class="tag filled">Graduate</span>
-            <span class="tag">Class of 2024</span>
-            <span class="tag filled">Icon</span>
-        </div>
-        <div class="pg-footer" style="max-width: 500px; margin: 32px auto 0;">
-            <span class="pg-num">— 04 —</span>
-            <span class="pg-mag">The Graduate &middot; Final Edition</span>
-            <span class="pg-num">✦</span>
-        </div>
+  <div class="tape" style="left: 25%; transform: translateX(-50%) rotate(-0.8deg);"></div>
+  <div class="page paper verdict-page" style="position: relative;">
+    <div class="verdict-stamp">GRADUATED</div>
+    <div class="verdict-headline">
+      The Architect<br/>of Her Own Future
     </div>
+    <div class="verdict-body">
+      Five years of studio nights, final crits, and creative chaos — all building toward this moment. Kidi, you didn't just earn a degree. You proved that talent multiplied by resilience equals something truly extraordinary.
+    </div>
+    <div style="max-width:360px; margin: 0 auto 28px;">
+      <img src="images/Screenshot_20260629_180146_Instagram.jpg" alt="Kidi graduating" style="width:100%; display:block; filter: sepia(12%) contrast(1.04); border: 6px solid var(--cream); box-shadow: 0 4px 20px var(--shadow), -3px 3px 0 var(--aged-dark);" />
+    </div>
+    <div class="verdict-tags">
+      <span class="tag filled">Architect</span>
+      <span class="tag">Painter</span>
+      <span class="tag filled">Graduate</span>
+      <span class="tag">Class of 2024</span>
+      <span class="tag filled">Icon</span>
+    </div>
+    <div class="pg-footer" style="max-width: 500px; margin: 32px auto 0;">
+      <span class="pg-num">— 04 —</span>
+      <span class="pg-mag">The Graduate &middot; Final Edition</span>
+      <span class="pg-num">✦</span>
+    </div>
+  </div>
 </div>
+
 </body>
 </html>
